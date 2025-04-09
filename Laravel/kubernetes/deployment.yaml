@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-laravel-app
+  namespace: test-laravel-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: test-laravel-app
+  template:
+    metadata:
+      labels:
+        app: test-laravel-app
+    spec:
+      containers:
+      - name: test-laravel-app
+        image: tomasdav9/test-laravel-app:v3
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: "1"
+            memory: "1Gi"
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+        envFrom:
+        - configMapRef:
+            name: test-laravel-app-config

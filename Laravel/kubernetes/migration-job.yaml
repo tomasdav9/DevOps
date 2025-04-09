@@ -1,0 +1,18 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: laravel-migration-job
+  namespace: test-laravel-app
+spec:
+  ttlSecondsAfterFinished: 100
+  template:
+    spec:
+      containers:
+      - name: laravel-migration
+        image: tomasdav9/test-laravel-app:v3
+        command: ["php", "artisan", "migrate", "--force"]
+        envFrom:
+        - configMapRef:
+            name: test-laravel-app-config
+      restartPolicy: Never
+  backoffLimit: 1

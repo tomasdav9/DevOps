@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-laravel-app-service
+  namespace: test-laravel-app
+spec:
+  selector:
+    app: test-laravel-app
+  ports:
+  - port: 80
+    targetPort: 80
+  type: LoadBalancer
