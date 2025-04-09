@@ -1,0 +1,29 @@
+version: 2.1
+orbs:
+  docker: circleci/docker@2.1.1
+jobs:
+  build:
+    working_directory: ~/repo
+    docker:
+      - image: cimg/php:8.4
+    steps:
+      - checkout
+      - run:
+          name: "Install dependencies"
+          command: |
+            if [ ! -f composer.json ]; then
+              echo "Error: composer.json not found in the repository. Please add it to the root of your project."
+              exit 1
+            fi
+            composer install -n --prefer-dist --ignore-platform-reqs
+      - run:
+          name: "Build the image"
+          command: docker build -t tomasdav9/test-laravel-app:v4 .
+      - run:
+          name: "Push the image"
+          command: docker push tomasdav9/test-laravel-app:v4
+workflows:
+  version: 2
+  build-workflow:
+    jobs:
+      - build
