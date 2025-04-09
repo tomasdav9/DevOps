@@ -2,6 +2,16 @@
 # See: https://circleci.com/docs/configuration-reference
 version: 2.1
 
+orbs:
+  # Use the Docker orb to build and push Docker images.
+  # See: https://circleci.com/developer/orbs/orb/circleci/docker
+  docker: circleci/docker@2.1.1
+  # Use the PHP orb to manage PHP dependencies.
+  # See: https://circleci.com/developer/orbs/orb/circleci/php
+  php: circleci/php@2.0.0
+  # User the Kubernetes orb to deploy to Kubernetes.
+  # See: https://circleci.com/developer/orbs/orb/circleci/kubernetes
+  kubernetes: circleci/kubernetes@1.3.1
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/jobs-steps/#jobs-overview & https://circleci.com/docs/configuration-reference/#jobs
 jobs:
@@ -40,6 +50,7 @@ jobs:
           name: "Push the image"
           command: docker push tomasdav9/test-laravel-app:v4
         
+      
       # - save_cache:
       #     key: v1-dependencies-{{ checksum "composer.json" }}
       #     paths:
