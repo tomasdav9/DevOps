@@ -25,10 +25,9 @@ jobs:
           key: v1-dependencies-{{ checksum "composer.json" }}
           paths:
             - ./vendor
-      - docker/build:
-          image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
-          tag: latest
-          dockerfile: Dockerfile
+      - run:
+          name: "Build Docker Image"
+          command: docker buildx build --file=./Dockerfile --tag=docker.io/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME:latest .
       - docker/push:
           image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
           tag: latest
