@@ -13,22 +13,22 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "Laravel/composer.json" }}
+            - v1-dependencies-{{ checksum "composer.json" }}
             - v1-dependencies-
       - run:
           name: "LS"
-          command: ls Laravel
+          command: ls
       - run:
           name: "Install dependencies"
           command: composer install -n --prefer-dist --ignore-platform-reqs
       - save_cache:
-          key: v1-dependencies-{{ checksum "Laravel/composer.json" }}
+          key: v1-dependencies-{{ checksum "composer.json" }}
           paths:
             - ./vendor
       - docker/build:
           image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
           tag: latest
-          dockerfile: Dockerfile
+          dockerfile: Laravel/Dockerfile
       - docker/push:
           image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
           tag: latest
