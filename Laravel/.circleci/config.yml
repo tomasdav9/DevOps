@@ -11,13 +11,13 @@ jobs:
       - image: cimg/php:8.4
     steps:
       - checkout
+      - run:
+          name: "Change to Laravel Directory"
+          command: cd Laravel
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "Laravel/composer.json" }}
             - v1-dependencies-
-      - run:
-          name: "List Laravel Directory"
-          command: ls Laravel
       - run:
           name: "Install dependencies"
           command: composer install -n --prefer-dist --ignore-platform-reqs --working-dir=Laravel
