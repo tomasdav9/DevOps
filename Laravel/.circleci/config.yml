@@ -5,7 +5,7 @@ orbs:
 
 jobs:
   build-and-push:
-    working_directory: ~/repo/Laravel
+    working_directory: ~/repo
     executor: docker/docker
     docker:
       - image: cimg/php:8.4
@@ -13,22 +13,22 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "composer.json" }}
+            - v1-dependencies-{{ checksum "Laravel/composer.json" }}
             - v1-dependencies-
       - run:
-          name: "LS"
-          command: ls
+          name: "List Laravel Directory"
+          command: ls Laravel
       - run:
           name: "Install dependencies"
-          command: composer install -n --prefer-dist --ignore-platform-reqs
+          command: composer install -n --prefer-dist --ignore-platform-reqs --working-dir=Laravel
       - save_cache:
-          key: v1-dependencies-{{ checksum "composer.json" }}
+          key: v1-dependencies-{{ checksum "Laravel/composer.json" }}
           paths:
-            - ./vendor
+            - Laravel/vendor
       - docker/build:
           image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
           tag: latest
-          dockerfile: Laravel/Dockerfile
+          dockerfile: Dockerfile
       - docker/push:
           image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
           tag: latest
