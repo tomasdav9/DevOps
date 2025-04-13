@@ -10,10 +10,9 @@ jobs:
     docker:
       - image: cimg/php:8.4
     steps:
-      # - docker/check:
-      #     docker-username: DOCKER_USERNAME
-      #     docker-password: DOCKER_PASSWORD
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "composer.json" }}
