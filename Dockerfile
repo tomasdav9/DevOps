@@ -30,7 +30,7 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 RUN composer install --optimize-autoloader --ignore-platform-reqs
 
 # Generate application key
-RUN php artisan key:generate
+# RUN php artisan key:generate
 
 # Expose port 80
 EXPOSE 80
