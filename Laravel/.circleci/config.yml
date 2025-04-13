@@ -5,7 +5,7 @@ version: 2.1
 orbs:
   # Use the Docker orb to build and push Docker images.
   # See: https://circleci.com/developer/orbs/orb/circleci/docker
-  # docker: circleci/docker@2.1.1
+  docker: circleci/docker@2.8.2
   # # Use the PHP orb to manage PHP dependencies.
   # # See: https://circleci.com/developer/orbs/orb/circleci/php
   # php: circleci/php@2.0.0
@@ -15,53 +15,63 @@ orbs:
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/jobs-steps/#jobs-overview & https://circleci.com/docs/configuration-reference/#jobs
 jobs:
-  build:
+  build-and-push:
     working_directory: ~/repo
+    executor: docker/docker
+
     # Specify the execution environment. You can specify an image from Docker Hub or use one of our convenience images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/executor-intro/ & https://circleci.com/docs/configuration-reference/#executor-job
     docker:
       # Specify the version you desire here
       # See: https://circleci.com/developer/images/image/cimg/base
       - image: cimg/php:8.4
-
+    
     # Add steps to the job
     # See: https://circleci.com/docs/jobs-steps/#steps-overview & https://circleci.com/docs/configuration-reference/#steps
     steps:
+      - docker/check:
+          docker-username: $DOCKER_USERNAME
+          docker-password: $DOCKER_PASSWORD
+          # docker-image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
+          # docker-tag: latest
+      
       # Checkout the code as the first step.
       - checkout
       
       # Download and cache dependencies
-      # - restore_cache:
-      #     keys:
-      #       # "composer.lock" can be used if it is committed to the repo
-      #       - v1-dependencies-{{ checksum "composer.json" }}
-      #       # fallback to using the latest cache if no exact match is found
-      #       - v1-dependencies-
+      - restore_cache:
+          keys:
+            # "composer.lock" can be used if it is committed to the repo
+            - v1-dependencies-{{ checksum "composer.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
 
       - run:
           name: "Install dependencies"
           command: composer install -n --prefer-dist --ignore-platform-reqs
-
-      - run:
-          name: "Build the image"
-          command: docker build -t tomasdav9/test-laravel-app:v4 .
       
-      - run:
-          name: "Push the image"
-          command: docker push tomasdav9/test-laravel-app:v4
-        
       
-      # - save_cache:
-      #     key: v1-dependencies-{{ checksum "composer.json" }}
-      #     paths:
-      #       - ./vendor
+      - save_cache:
+          key: v1-dependencies-{{ checksum "composer.json" }}
+          paths:
+            - ./vendor
 
+      - docker/build:
+          image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
+          tag: latest
+          dockerfile: Dockerfile
+
+      - docker/push:
+          image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
+          tag: latest
+          registry: docker.io
             
 
-# # Orchestrate jobs using workflows
-# # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
-# workflows:
-#   build-workflow: # This is the name of the workflow, feel free to change it to better match your workflow.
-#     # Inside the workflow, you define the jobs you want to run.
-#     jobs:
-#       - say-hello
+# Orchestrate jobs using workflows
+# See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
+workflows:
+  commit:
+    jobs:
+      - build-and-push:
+          context:
+            - docker
