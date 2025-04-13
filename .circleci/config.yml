@@ -10,9 +10,10 @@ jobs:
     docker:
       - image: cimg/php:8.4
     steps:
-      - docker/check:
-          docker-username: DOCKER_USERNAME
-          docker-password: DOCKER_PASSWORD
+      - run:
+          name: "Login to Docker Hub"
+          command: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      
       - checkout
       - restore_cache:
           keys:
@@ -21,6 +22,7 @@ jobs:
       - run:
           name: "Install dependencies"
           command: composer install -n --prefer-dist --ignore-platform-reqs
+
       - save_cache:
           key: v1-dependencies-{{ checksum "composer.json" }}
           paths:
