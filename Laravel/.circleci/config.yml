@@ -17,7 +17,7 @@ jobs:
             - v1-dependencies-
       - run:
           name: "LS"
-          command: ls
+          command: ls Laravel
       - run:
           name: "Install dependencies"
           command: composer install -n --prefer-dist --ignore-platform-reqs
