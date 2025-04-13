@@ -5,7 +5,7 @@ orbs:
 
 jobs:
   build-and-push:
-    working_directory: ~/repo
+    working_directory: ~/repo/Laravel
     executor: docker/docker
     docker:
       - image: cimg/php:8.4
@@ -13,7 +13,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "composer.json" }}
+            - v1-dependencies-{{ checksum "Laravel/composer.json" }}
             - v1-dependencies-
       - run:
           name: "LS"
@@ -22,7 +22,7 @@ jobs:
           name: "Install dependencies"
           command: composer install -n --prefer-dist --ignore-platform-reqs
       - save_cache:
-          key: v1-dependencies-{{ checksum "composer.json" }}
+          key: v1-dependencies-{{ checksum "Laravel/composer.json" }}
           paths:
             - ./vendor
       - docker/build:
