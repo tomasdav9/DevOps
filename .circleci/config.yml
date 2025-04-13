@@ -11,8 +11,8 @@ jobs:
       - image: cimg/php:8.4
     steps:
       - docker/check:
-          docker-username: "$DOCKER_USERNAME"
-          docker-password: "$DOCKER_PASSWORD"
+          docker-username: DOCKER_USERNAME
+          docker-password: DOCKER_PASSWORD
       - checkout
       - restore_cache:
           keys:
