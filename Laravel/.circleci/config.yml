@@ -28,7 +28,8 @@ jobs:
       - docker/build:
           image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
           tag: latest
-          dockerfile: Dockerfile
+          dockerfile: Laravel/Dockerfile
+          path: ./Laravel
       - docker/push:
           image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
           tag: latest
