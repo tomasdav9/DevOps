@@ -10,10 +10,9 @@ jobs:
     docker:
       - image: cimg/php:8.4
     steps:
-      # - docker/check:
-      #     docker-username: DOCKER_USERNAME
-      #     docker-password: DOCKER_PASSWORD
       - checkout
+      - setup_remote_docker:
+          version: 20.10.14
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "composer.json" }}
@@ -27,7 +26,9 @@ jobs:
             - ./vendor
       - run:
           name: "Build Docker Image"
-          command: docker buildx build --file=./Dockerfile --tag=docker.io/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME:latest .
+          command: |
+            docker buildx create --use
+            docker buildx build --platform linux/amd64 -t docker.io/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME:latest -f Dockerfile .
       - docker/push:
           image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
           tag: latest
